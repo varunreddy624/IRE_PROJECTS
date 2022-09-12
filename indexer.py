@@ -48,6 +48,7 @@ t,i,b,c,l,r count of words
 
 NUMBER_OF_DOCS_PER_SAVE = 5000
 NUMBER_OF_WORDS_PER_SAVE = 20000
+SIZE_THEROSHOLD_ON_GLOBAL_INDEX_FILE = 10**7
 
 class MyHandler(xml.sax.handler.ContentHandler):
     def __init__(self):
@@ -222,6 +223,7 @@ class MyHandler(xml.sax.handler.ContentHandler):
                 self.globalIndex[i].append(self.pageIndex[i])
             
             if self.page % NUMBER_OF_DOCS_PER_SAVE == 0:
+                print(self.page)
                 self.write_index_to_file()
             
             self.page += 1
@@ -235,6 +237,8 @@ class MyHandler(xml.sax.handler.ContentHandler):
         heap = []
 
         globalIndex = defaultdict(lambda:[0,''])
+
+        tempCount = 0
 
         def writeGlobalIndexToFile():
             mergedIndex = open(f'globalIndex/{self.globalIndexCounter}.txt','w+')
@@ -263,14 +267,27 @@ class MyHandler(xml.sax.handler.ContentHandler):
             count = int(postingList[:ind])
             originalList = postingList[ind+1:]
 
+            prevLen = len(globalIndex)
+
             globalIndex[character][0]+=count
             globalIndex[character][1]+=originalList
-            
-            if len(globalIndex) == NUMBER_OF_WORDS_PER_SAVE+1:
+
+            tempCount += len(originalList)
+
+            if len(globalIndex) != prevLen and tempCount >= SIZE_THEROSHOLD_ON_GLOBAL_INDEX_FILE:
                 prevVal = globalIndex[character]
                 globalIndex.pop(character)
                 writeGlobalIndexToFile()
+
+                tempCount = len(originalList)
+
                 globalIndex[character] = prevVal
+            
+            # if len(globalIndex) == NUMBER_OF_WORDS_PER_SAVE+1:
+            #     prevVal = globalIndex[character]
+            #     globalIndex.pop(character)
+            #     writeGlobalIndexToFile()
+            #     globalIndex[character] = prevVal
             
 
             t = filePtr.readline()
@@ -298,12 +315,13 @@ if __name__ == "__main__" :
     parser.parse(dump_file)
     
     if (handler.page-1)%NUMBER_OF_DOCS_PER_SAVE != 0:
+        print(handler.page)
         handler.write_index_to_file()
 
-    handler.merge_index()
+    # handler.merge_index()
 
     invertedindex_stat_file.write(str(handler.page-1)+'\n')
-    invertedindex_stat_file.write(str(handler.tokens))
+    # invertedindex_stat_file.write(str(handler.tokens))
     invertedindex_stat_file.close()
 
     dump_file.close()
