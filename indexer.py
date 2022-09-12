@@ -37,7 +37,7 @@ stemmer = Stemmer.Stemmer('english')
 title_file = open('titles.txt','w')
 titleIndex = open('titleIndex.txt','w+')
 secondaryIndex = open('secondaryIndex.txt','w+')
-invertedindex_stat_file = open('invertedindex_stat.txt','w+')
+invertedindex_stat_file = open('invertedindex_stat.txt','a')
 
 '''
 global index 
@@ -318,7 +318,7 @@ if __name__ == "__main__" :
         print(handler.page)
         handler.write_index_to_file()
 
-    # handler.merge_index()
+    handler.merge_index()
 
     invertedindex_stat_file.write(str(handler.page-1)+'\n')
     # invertedindex_stat_file.write(str(handler.tokens))
