@@ -251,7 +251,7 @@ class MyHandler(xml.sax.handler.ContentHandler):
             globalIndex.clear()
             self.globalIndexCounter+=1
         
-        for i in range(1,self.pageIndexCounter):
+        for i in range(1,4459):
             file =  open(f'./pageIndex/{i}.txt','r')
             t  = file.readline().strip()
             ind = t.find(';')
@@ -275,6 +275,7 @@ class MyHandler(xml.sax.handler.ContentHandler):
             tempCount += len(originalList)
 
             if len(globalIndex) != prevLen and tempCount >= SIZE_THEROSHOLD_ON_GLOBAL_INDEX_FILE:
+                print(self.globalIndexCounter)
                 prevVal = globalIndex[character]
                 globalIndex.pop(character)
                 writeGlobalIndexToFile()
@@ -297,8 +298,8 @@ class MyHandler(xml.sax.handler.ContentHandler):
                 character = t[:ind]
                 postingList = t[ind+1:]
                 heapq.heappush(heap,[character,i,postingList,filePtr])
-            else:
-                os.remove(filePtr.name)
+            # else:
+            #     os.remove(filePtr.name)
 
 
         if len(globalIndex) != 0:
@@ -309,27 +310,28 @@ class MyHandler(xml.sax.handler.ContentHandler):
 
 if __name__ == "__main__" :
     handler = MyHandler()
-    parser = xml.sax.make_parser()
-    parser.setContentHandler(handler)
-    dump_file = open(path_to_wiki_dump)
-    parser.parse(dump_file)
+    # parser = xml.sax.make_parser()
+    # parser.setContentHandler(handler)
     
-    if (handler.page-1)%NUMBER_OF_DOCS_PER_SAVE != 0:
-        print(handler.page)
-        handler.write_index_to_file()
+    # dump_file = open(path_to_wiki_dump)
+    # parser.parse(dump_file)
+    
+    # if (handler.page-1)%NUMBER_OF_DOCS_PER_SAVE != 0:
+    #     print(handler.page)
+    #     handler.write_index_to_file()
 
     handler.merge_index()
 
-    invertedindex_stat_file.write(str(handler.page-1)+'\n')
-    # invertedindex_stat_file.write(str(handler.tokens))
+    # invertedindex_stat_file.write(str(handler.page-1)+'\n')
+    invertedindex_stat_file.write(str(handler.tokens))
     invertedindex_stat_file.close()
 
-    dump_file.close()
-    title_file.close()
-    titleIndex.close()
+    # dump_file.close()
+    # title_file.close()
+    # titleIndex.close()
 
     print(f"time for execution: {time.time()-startTime}")
 
-
-
+# 23172 seconds - for dividing the files to 5000 documents index
+# 1.5hrs - for merging the above individual indexes
 # python3 indexer.py /Users/saivarunreddybhavanam/Library/CloudStorage/OneDrive-InternationalInstituteofInformationTechnology/3rd sem related/IRE/PROJECTS/MINI PROJECT/PHASE-1/enwiki-20220720-pages-articles-multistream15.xml

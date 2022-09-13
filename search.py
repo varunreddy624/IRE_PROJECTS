@@ -14,12 +14,9 @@ titleIndexList = [int(i.strip()) for i in titleIndex.readlines()]
 stat = open('invertedindex_stat.txt','r')
 titles = open('titles.txt','r')
 queries = open('queries.txt','r')
-queryOutput = open('queries_output2.txt','w+')
+queryOutput = open('queries_output.txt','w+')
 
 N = int(stat.readline().strip())
-
-print(N)
-
 
 nltk.download('stopwords')
 stop_words = set(stopwords.words("english"))

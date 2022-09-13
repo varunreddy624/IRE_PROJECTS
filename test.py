@@ -1,16 +1,10 @@
-import re
+ind = open('titleIndex.txt','w+')
+f = open('titles.txt','r')
 
-s1 = '{{infobox varun}}'
-s2 = '{{Infobox reddy}}'
-
-info1 = re.search(r'\{\{[i,I]nfobox(.*?)\}\}',s1)
-if info1:
-    print(info1.groups(1))
-else:
-    print("no match in s1")
-
-info2 = re.search(r'\{\{[i,I]nfobox(.*?)\}\}',s2)
-if info2:
-    print(info2.groups(1))
-else:
-    print("no match in s2")
+while True:
+    currInd = f.tell()
+    t = f.readline()
+    if t=='':
+        break
+    else:
+        ind.write(f"{currInd}\n")
